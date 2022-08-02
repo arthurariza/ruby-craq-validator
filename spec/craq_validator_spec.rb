@@ -2,8 +2,37 @@
 
 require_relative '../lib/craq_validator'
 
+# rubocop:disable Metrics/BlockLength
 describe CraqValidator do
-  it 'is true' do
-    expect(true).to be_truthy
+  let(:questions_one) do
+    [
+      {
+        text: 'question one?',
+        options: [{ text: '1' }, { text: '2' }]
+      },
+      {
+        text: 'question two?',
+        options: [{ text: '1' }, { text: '2' }]
+      }
+    ]
+  end
+
+  let(:answers_correct) { { q0: 1, q1: 0 } }
+
+  describe '#validate' do
+    it 'returns valid when all questions are answered' do
+      validator = CraqValidator.new(questions_one, answers_correct)
+
+      expect(validator.validate).to be_truthy
+      expect(validator.errors).to be_empty
+    end
+
+    it 'returns invalid when answers is empty' do
+      validator = CraqValidator.new(questions_one, {})
+
+      expect(validator.validate).to be_falsey
+      expect(validator.errors).not_to be_empty
+      expect(validator.errors).to include(answers: 'there are no answers')
+    end
   end
 end
