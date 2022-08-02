@@ -51,15 +51,12 @@ describe CraqValidator do
     ]
   end
 
-  let(:answers_correct) { { q0: 1, q1: 0 } }
-  let(:answers_invalid_list) { { q0: 3, q1: 0 } }
-  let(:answers_not_answered) { { q1: 0, q2: 0 } }
-  let(:terminal_answers_not_answered) { { q0: 0, q1: 0, q2: 1 } }
-  let(:terminal_answers_is_answered) { { q0: 0, q1: 1 } }
-  let(:terminal_answers_shouldnt_be_answered) { { q0: 0, q1: 1, q2: 1 } }
-
   describe '#validate' do
     context 'returns valid' do
+      let(:answers_correct) { { q0: 1, q1: 0 } }
+      let(:terminal_answers_not_answered) { { q0: 0, q1: 0, q2: 1 } }
+      let(:terminal_answers_is_answered) { { q0: 0, q1: 1 } }
+
       it 'when all questions are answered' do
         validator = CraqValidator.new(questions, answers_correct)
 
@@ -83,6 +80,10 @@ describe CraqValidator do
     end
 
     context 'returns invalid' do
+      let(:answers_invalid_list) { { q0: 3, q1: 0 } }
+      let(:answers_not_answered) { { q1: 0, q2: 0 } }
+      let(:terminal_answers_shouldnt_be_answered) { { q0: 0, q1: 1, q2: 1 } }
+
       it 'when answers is empty' do
         validator = CraqValidator.new(questions, {})
 
