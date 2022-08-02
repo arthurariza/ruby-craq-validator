@@ -14,6 +14,13 @@ class CraqValidator
   def validate
     return unless add_there_are_no_answers_error
 
+    @questions.each_with_index do |question, index|
+      unless question[:options][@answers.values[index]]
+        add_not_in_valid_answer_error(index)
+        next
+      end
+    end
+
     @valid
   end
 
@@ -26,5 +33,10 @@ class CraqValidator
     end
 
     @valid
+  end
+
+  def add_not_in_valid_answer_error(index)
+    @valid = false
+    @errors[:"q#{index}"] = 'has an answer that is not on the list of valid answers'
   end
 end
