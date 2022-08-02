@@ -43,5 +43,13 @@ describe CraqValidator do
       expect(validator.errors).not_to be_empty
       expect(validator.errors).to include(q0: 'has an answer that is not on the list of valid answers')
     end
+
+    it 'returns invalid when a question is not answered' do
+      validator = CraqValidator.new(questions_one, { q0: 0 })
+
+      expect(validator.validate).to be_falsey
+      expect(validator.errors).not_to be_empty
+      expect(validator.errors).to include(q1: 'was not answered')
+    end
   end
 end

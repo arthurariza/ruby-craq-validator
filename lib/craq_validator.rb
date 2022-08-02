@@ -11,11 +11,19 @@ class CraqValidator
     @valid = true
   end
 
+  # rubocop:disable Metrics/MethodLength
   def validate
     return unless add_there_are_no_answers_error
 
     @questions.each_with_index do |question, index|
-      unless question[:options][@answers.values[index]]
+      answer = @answers.values[index]
+
+      unless answer
+        add_was_not_answered_error(index)
+        next
+      end
+
+      unless question[:options][answer]
         add_not_in_valid_answer_error(index)
         next
       end
@@ -38,5 +46,10 @@ class CraqValidator
   def add_not_in_valid_answer_error(index)
     @valid = false
     @errors[:"q#{index}"] = 'has an answer that is not on the list of valid answers'
+  end
+
+  def add_was_not_answered_error(index)
+    @valid = false
+    @errors[:"q#{index}"] = 'was not answered'
   end
 end
