@@ -17,8 +17,26 @@ describe CraqValidator do
     ]
   end
 
+  let(:three_questions) do
+    [
+      {
+        text: 'question one?',
+        options: [{ text: '1' }, { text: '2' }]
+      },
+      {
+        text: 'question two?',
+        options: [{ text: '1' }, { text: '2' }]
+      },
+      {
+        text: 'question three?',
+        options: [{ text: '1' }, { text: '2' }]
+      }
+    ]
+  end
+
   let(:answers_correct) { { q0: 1, q1: 0 } }
   let(:answers_invalid_list) { { q0: 3, q1: 0 } }
+  let(:answers_not_answered) { { q1: 0, q2: 0 } }
 
   describe '#validate' do
     context 'returns valid' do
@@ -48,11 +66,11 @@ describe CraqValidator do
       end
 
       it 'when a question is not answered' do
-        validator = CraqValidator.new(questions, { q0: 0 })
+        validator = CraqValidator.new(three_questions, answers_not_answered)
 
         expect(validator.validate).to be_falsey
         expect(validator.errors).not_to be_empty
-        expect(validator.errors).to include(q1: 'was not answered')
+        expect(validator.errors).to include(q0: 'was not answered')
       end
     end
   end

@@ -16,14 +16,16 @@ class CraqValidator
     return unless add_there_are_no_answers_error
 
     @questions.each_with_index do |question, index|
-      answer = @answers.values[index]
+      answer = @answers[:"q#{index}"]
 
       unless answer
         add_was_not_answered_error(index)
         next
       end
 
-      unless question[:options][answer]
+      answer_index = @answers.values[index] || @answers.length
+
+      unless question[:options][answer_index]
         add_not_in_valid_answer_error(index)
         next
       end
