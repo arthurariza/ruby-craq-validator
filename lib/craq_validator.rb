@@ -3,8 +3,8 @@
 class CraqValidator
   COMPLETE_SYMBOL = :complete_if_selected
 
-  attr_reader :questions, :answers, :terminal_question_answered
-  attr_accessor :errors
+  attr_reader :questions, :answers
+  attr_accessor :errors, :terminal_question_answered
 
   def initialize(questions, answers)
     @questions = questions
@@ -14,38 +14,41 @@ class CraqValidator
     @terminal_question_answered = false
   end
 
-  # rubocop:disable Metrics/MethodLength
-  # rubocop:disable Metrics/CyclomaticComplexity
   def validate
     return unless add_there_are_no_answers_error
 
+    validate_each_question
+
+    @valid
+  end
+
+  private
+
+  # rubocop:disable Metrics/MethodLength
+  def validate_each_question
     @questions.each_with_index do |question, index|
+      answer = @answers[:"q#{index}"]
+
       if @terminal_question_answered
-        add_terminal_question_aswered(index) if index < @answers.length
+        add_terminal_question_aswered(index) if answer
         next
       end
-
-      answer = @answers[:"q#{index}"]
 
       unless answer
         add_was_not_answered_error(index)
         next
       end
 
-      answer_index = @answers.values[index] || @answers.length
+      answer_index = @answers.values[index]
 
-      unless question[:options][answer_index]
+      unless answer_index && question[:options][answer_index]
         add_not_in_valid_answer_error(index)
         next
       end
 
       check_terminal_question_answered(question, answer)
     end
-
-    @valid
   end
-
-  private
 
   def add_there_are_no_answers_error
     if @answers.empty?
